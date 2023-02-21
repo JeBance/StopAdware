@@ -16,12 +16,13 @@ function getDomains($string) {
 
 if (php_sapi_name() == 'cli') {
 
+	$countHosts = ['v4'=>0, 'v6'=>0];
+
 	while(1) {
 
 		$servers = json_decode(file_get_contents('https://raw.githubusercontent.com/JeBance/StopAdware/gh-pages/servers.json'), true);
 
 		$hosts = ['v4'=>[], 'v6'=>[]];
-		$countHosts = ['v4'=>0, 'v6'=>0];
 
 		for ($i = 0; $i < count($servers); $i++) {
 			try {
