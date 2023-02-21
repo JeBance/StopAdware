@@ -3,13 +3,13 @@ function getDomains($string) {
 	global $hosts;
 	$result = false;
 	if ((substr($string, 0, 3)) == ":: ") {
-		$result = substr($string, 4, strlen($string) - 4);
+		$result = trim(substr($string, 4, strlen($string) - 4), "\n\r\t");
 		$hosts['v6'][] = $result;
 	} elseif ((substr($string, 0, 9)) == "127.0.0.1") {
-		$result = substr($string, 10, strlen($string) - 10);
+		$result = trim(substr($string, 10, strlen($string) - 10), "\n\r\t");
 		$hosts['v4'][] = $result;
 	} elseif ((substr($string, 0, 7)) == "0.0.0.0") {
-		$result = substr($string, 8, strlen($string) - 8);
+		$result = trim(substr($string, 8, strlen($string) - 8), "\n\r\t");
 		$hosts['v4'][] = $result;
 	}
 }
@@ -81,7 +81,7 @@ ff02::3 ip6-allhosts
 
 ";
 			for ($i = 0; $i < count($hosts['v4']); $i++) {
-				$data .= "0.0.0.0 ".$hosts['v4'][$i];
+				$data .= "0.0.0.0 ".$hosts['v4'][$i]."\n";
 			}
 			$data .= "
 # --------------------------------------------
@@ -90,7 +90,7 @@ ff02::3 ip6-allhosts
 
 ";
 			for ($i = 0; $i < count($hosts['v6']); $i++) {
-				$data .= ":: ".$hosts['v6'][$i];
+				$data .= ":: ".$hosts['v6'][$i]."\n";
 			}
 
 			$fcreate = fopen('/PATH_TO_FILE/hosts', "w+");
@@ -105,6 +105,10 @@ ff02::3 ip6-allhosts
 			
 			unset($hosts);
 		}
+
+		exec('git add --all');
+		exec('git commit -m "updated '.date('d.m.Y h:i').'"');
+		exec('git push -u origin gh-pages');
 
 		sleep(86400);	// updated every 24 hours
 	}
